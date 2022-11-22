@@ -55,19 +55,14 @@ int main()
 			negative = false;
 			nextNum = false;
 
-			if (currCh == '-') // Определяем, отрицательное ли число
-			{
-				if (!digit(prevCh))
-				{
-					negative = true;
-					firstNum += currCh;
-				}
-			}
-
 			if (digit(currCh)) // Читаем первое число
 			{
 				while (digit(currCh))
 				{
+					if (prevCh == '-')
+					{
+						negative = true;
+					}
 					firstNum += currCh;
 					num1 = stoi(firstNum);
 					currCh = line[i], i++;
@@ -75,6 +70,11 @@ int main()
 					{
 						break;
 					}
+				}
+				if (negative == true)
+				{
+					num1 = -num1;
+					negative = false;
 				}
 				if (operation(currCh) && (negative == false))
 				{
@@ -169,12 +169,12 @@ int main()
 									sign = currCh;
 								}
 								else
-								{
+								{	
 									firstNum = secondNum;
 									num1 = stoi(firstNum);
 									secondNum = "";
 									nextNum = true;
-									sign = currCh;
+									sign = currCh;									
 								}
 							}
 						}
@@ -186,10 +186,18 @@ int main()
 			secondNum = "";
 		}
 	}
-
 	fileInput.close();
-	cout << "Наибольшее число: " << maxInt << endl;
-	cout << "Строка, в которой находится наибольшее число: " << lineMax << endl;
+	if (maxInt == INT_MIN)
+	{
+		cout << "Максимальное число не найдено!" << endl;
+	}
+	else
+	{
+		cout << "Наибольшее число: " << maxInt << endl;
+		cout << "Строка, в которой находится наибольшее число: " << lineMax << endl;
+
+	}
+
 
 	return 0;
 }
