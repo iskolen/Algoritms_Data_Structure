@@ -22,13 +22,14 @@
 
 using namespace std;
 
-
 int main()
 {
 	string line, name;
 	int lineNum, time;
 	char currCh;
 
+	time = 0;
+	name = "";
 	currCh = ' ';
 	lineNum = 0;
 
@@ -45,6 +46,14 @@ int main()
 	}
 	cout << endl;
 
+
+	struct person
+	{
+		string name;
+		int time;
+	};
+
+
 	while (getline(fileInput, line))// Построчное чтение файла
 	{
 		int i = 0;
@@ -52,24 +61,43 @@ int main()
 		int len = line.length();
 		while ((i != len) && (i < len))// Обработка каждой строки
 		{
-			if (lineNum == 2)
+			if (lineNum == 2)// Переход на новую строку
 			{
 				cout << endl;
 				lineNum = 0;
 			}
 
-			if (i == 0)
+			if (i == 0)// Пропуск обозначение номера очереди 
 			{
 				i = 3;
 			}
 
 			currCh = line[i], i++;
-			while (currCh == '(')
+			if (currCh != '(')// Считывание имён и времени
 			{
-				name = line[i], i++;
+				while (currCh != '(')
+				{
+					if (currCh == ' ')
+					{
+						currCh = line[i], i++;
+					}
+					name += currCh;
+					currCh = line[i], i++;
+				}
+				cout << "Имя: " << name;
+				name = "";
+				currCh = line[i], i++;
+
+				while (currCh != ')')
+				{
+					time += currCh - '0';
+					currCh = line[i], i++;
+				}
+				cout << "  Время в очереди: "<< time << endl;
+				time = 0;
 			}
 
-			cout << currCh;
+
 		}
 	}
 }
