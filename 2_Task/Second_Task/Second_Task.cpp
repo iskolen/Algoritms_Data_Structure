@@ -17,7 +17,7 @@
 #include <fstream>
 #include <string>
 #include <cstring>
-#include <queue>
+
 
 
 using namespace std;
@@ -25,9 +25,12 @@ using namespace std;
 
 int main()
 {
-	string line, firstIn, secondIn;
-	int len, lineNum;
+	string line, name;
+	int lineNum, time;
 	char currCh;
+
+	currCh = ' ';
+	lineNum = 0;
 
 
 	setlocale(LC_ALL, "RUS");
@@ -42,15 +45,32 @@ int main()
 	}
 	cout << endl;
 
-	while (!fileInput.eof())
+	while (getline(fileInput, line))// Построчное чтение файла
 	{
-		currCh = fileInput.get();
-		if (fileInput.eof()) // Удаление последнего символа
+		int i = 0;
+		lineNum++;
+		int len = line.length();
+		while ((i != len) && (i < len))// Обработка каждой строки
 		{
-			break;
-		}
+			if (lineNum == 2)
+			{
+				cout << endl;
+				lineNum = 0;
+			}
 
-		cout << currCh;
+			if (i == 0)
+			{
+				i = 3;
+			}
+
+			currCh = line[i], i++;
+			while (currCh == '(')
+			{
+				name = line[i], i++;
+			}
+
+			cout << currCh;
+		}
 	}
 }
 
