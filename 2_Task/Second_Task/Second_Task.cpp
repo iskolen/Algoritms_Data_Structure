@@ -24,12 +24,31 @@ using namespace std;
 
 int main()
 {
-	string line, name;
-	int lineNum, time;
+	struct personsFirstQueue
+	{
+		string name;
+		int time;
+	};
+
+	struct personsSecondQueue
+	{
+		string name;
+		int time;
+	};
+
+	const int maxElements = 100;
+	personsFirstQueue firstQueue[maxElements];
+	personsSecondQueue secondQueue[maxElements];
+	
+	string line, name, temp;
+	int lineNum, time, personNum1, personNum2, timeSum;
 	char currCh;
 
+	personNum1 = 0;
+	personNum2 = 0;
 	time = 0;
 	name = "";
+	temp = "";
 	currCh = ' ';
 	lineNum = 0;
 
@@ -47,13 +66,6 @@ int main()
 	cout << endl;
 
 
-	struct person
-	{
-		string name;
-		int time;
-	};
-
-
 	while (getline(fileInput, line))// Построчное чтение файла
 	{
 		int i = 0;
@@ -64,7 +76,7 @@ int main()
 			if (lineNum == 2)// Переход на новую строку
 			{
 				cout << endl;
-				lineNum = 0;
+				lineNum = 10;
 			}
 
 			if (i == 0)// Пропуск обозначение номера очереди 
@@ -84,21 +96,67 @@ int main()
 					name += currCh;
 					currCh = line[i], i++;
 				}
+
+
 				cout << "Имя: " << name;
-				name = "";
 				currCh = line[i], i++;
 
 				while (currCh != ')')
 				{
-					time += currCh - '0';
+					temp += currCh;
 					currCh = line[i], i++;
 				}
+				time = stoi(temp);
+				
+
+
+				if (lineNum == 1)
+				{
+					firstQueue[personNum1].name = name;
+					firstQueue[personNum1].time = time;
+					personNum1++;
+				}
+				if (lineNum == 10)
+				{
+					secondQueue[personNum2].name = name;
+					secondQueue[personNum2].time = time;
+					personNum2++;
+				}
+
 				cout << "  Время в очереди: "<< time << endl;
+				temp = "";
+				name = "";
 				time = 0;
 			}
-
-
 		}
 	}
+	cout << endl;
+
+	cout << "1: ";
+	for (int i = 0; i < personNum1; i++)
+	{
+		cout << firstQueue[i].name;
+		if (i == personNum1 - 1)
+		{
+			cout << '[' << firstQueue[i].time << ']';
+			break;
+		}
+		cout << '[' << firstQueue[i].time << ']' << " ";
+	}
+	cout << endl;
+
+
+	cout << "2: ";
+	for (int i = 0; i < personNum2; i++)
+	{
+		cout << secondQueue[i].name;
+		if (i == personNum2 - 1)
+		{
+			cout << '[' << secondQueue[i].time << ']';
+			break;
+		}
+		cout << '[' << secondQueue[i].time << ']' << " ";
+	}
+
 }
 
