@@ -1,5 +1,0 @@
-﻿  Second_Task.cpp
-c:\users\admin\documents\github\algoritms_data_structure\2_task\second_task\second_task\second_task.cpp(33): warning C4101: len: неиспользованная локальная переменная
-c:\users\admin\documents\github\algoritms_data_structure\2_task\second_task\second_task\second_task.cpp(33): warning C4101: i: неиспользованная локальная переменная
-c:\users\admin\documents\github\algoritms_data_structure\2_task\second_task\second_task\second_task.cpp(33): warning C4101: startInt: неиспользованная локальная переменная
-  Second_Task.vcxproj -> C:\Users\Admin\Documents\GitHub\Algoritms_Data_Structure\2_Task\Second_Task\Debug\Second_Task.exe
