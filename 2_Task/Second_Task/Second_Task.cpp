@@ -132,7 +132,56 @@ int main()
 	}
 	cout << endl;
 
+	int timeFirstStart, timeFirstEnd;
+	int timeSecondStart, timeSecondEnd;
+	bool firstElement = true;
+
 	cout << "1: ";
+	int i = 0;
+	while (i < personNum1)// Вывод первой очереди
+	{
+		cout << firstQueue[i].name << "[";
+		if (firstElement == true)
+		{
+			timeFirstStart = firstQueue[i].time;
+		}
+		cout << timeFirstStart << ", ", i++;
+		if (i == personNum1)
+		{
+			cout << "END]";
+			break;
+		}
+		timeFirstEnd = timeFirstStart + firstQueue[i].time;
+		cout << timeFirstEnd << "] ";
+		timeFirstStart = timeFirstEnd;
+		firstElement = false;
+	}
+
+	cout << endl << "2: ";
+	firstElement = true;
+	i = 0;
+	while (i < personNum2)// Вывод второй очереди
+	{
+		cout << secondQueue[i].name << "[";
+		if (firstElement == true)
+		{
+			timeSecondStart = secondQueue[i].time;
+		}
+		cout << timeSecondStart << ", ", i++;
+		if (i == personNum2)
+		{
+			cout << "END]";
+			break;
+		}
+		timeSecondEnd = timeSecondStart + secondQueue[i].time;
+		cout << timeSecondEnd << "] ";
+		timeSecondStart = timeSecondEnd;
+		firstElement = false;
+	}
+
+
+
+	/*cout << "1: ";
 	for (int i = 0; i < personNum1; i++)
 	{
 		cout << firstQueue[i].name;
@@ -156,7 +205,7 @@ int main()
 			break;
 		}
 		cout << '[' << secondQueue[i].time << ']' << " ";
-	}
+	}*/
 
 }
 
