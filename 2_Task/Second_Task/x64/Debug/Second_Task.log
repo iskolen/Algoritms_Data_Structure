@@ -1,4 +1,3 @@
 ﻿  Second_Task.cpp
 c:\users\admin\documents\github\algoritms_data_structure\2_task\second_task\second_task.cpp(73): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
-c:\users\admin\documents\github\algoritms_data_structure\2_task\second_task\second_task.cpp(44): warning C4101: timeSum: неиспользованная локальная переменная
   Second_Task.vcxproj -> C:\Users\Admin\Documents\GitHub\Algoritms_Data_Structure\2_Task\x64\Debug\Second_Task.exe

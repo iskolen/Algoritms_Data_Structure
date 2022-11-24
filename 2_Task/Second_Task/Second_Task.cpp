@@ -41,7 +41,7 @@ int main()
 	personsSecondQueue secondQueue[maxElements];
 	
 	string line, name, temp;
-	int lineNum, time, personNum1, personNum2, timeSum;
+	int lineNum, time, personNum1, personNum2;
 	char currCh;
 
 	personNum1 = 0;
@@ -132,80 +132,111 @@ int main()
 	}
 	cout << endl;
 
+
+	struct delitePersons
+	{
+		int firstId;
+		int secondId;
+	};
+
+	delitePersons delitePerson[maxElements];
+	string namePerson1, namePerson2;
+	int personNum;
+	personNum = 0;
+
+	for (int i = 0; i < personNum1; i++)// Проверка на наличие человка в 2-ух очередях одновременно, и получение id в каждой из очереди
+	{
+		int a = 0;
+		namePerson1 = firstQueue[i].name;
+		namePerson2 = secondQueue[a].name;
+		if (namePerson1 != namePerson2)
+		{
+			while (namePerson1 != namePerson2)
+			{
+				namePerson2 = secondQueue[a].name;
+				if (namePerson1 == namePerson2)
+				{
+					delitePerson[personNum].firstId = i;
+					delitePerson[personNum].secondId = a;
+					personNum++;
+					break;
+				}
+				a++;
+				if (a == personNum2)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			delitePerson[personNum].firstId = i;
+			delitePerson[personNum].secondId = a;
+			personNum++;
+		}
+	}
+
+	for (int i = 0; i < personNum; i++)// Вывод id человека в обоих очередях, если он находится в двух очередях одновременно 
+	{
+		int id1 = delitePerson[i].firstId;
+		int id2 = delitePerson[i].secondId;
+		cout << "ID " << i << "-го элемента ";
+		cout << "[" <<  id1 << "]" << " - " << "[" << id2 << "]" << endl;
+	}
+
+	cout << endl;
+
+
 	int timeFirstStart, timeFirstEnd;
 	int timeSecondStart, timeSecondEnd;
 	bool firstElement = true;
-
+	timeFirstStart = 0;
 	cout << "1: ";
 	int i = 0;
 	while (i < personNum1)// Вывод первой очереди
 	{
 		cout << firstQueue[i].name << "[";
-		if (firstElement == true)
+
+		if (firstElement)
 		{
-			timeFirstStart = firstQueue[i].time;
+			timeFirstEnd = firstQueue[i].time;
+			cout << timeFirstStart << ", " << timeFirstEnd << "] ";
+			i++;
+			timeFirstStart = timeFirstEnd;
+			firstElement = false;
 		}
-		cout << timeFirstStart << ", ", i++;
-		if (i == personNum1)
+		else
 		{
-			cout << "END]";
-			break;
+			timeFirstEnd = timeFirstStart + firstQueue[i].time;
+			cout << timeFirstStart << ", " << timeFirstEnd << "] ";
+			i++;
+			timeFirstStart = timeFirstEnd;
 		}
-		timeFirstEnd = timeFirstStart + firstQueue[i].time;
-		cout << timeFirstEnd << "] ";
-		timeFirstStart = timeFirstEnd;
-		firstElement = false;
 	}
 
-	cout << endl << "2: ";
 	firstElement = true;
+	timeSecondStart = 0;
+	cout << endl << "2: ";
 	i = 0;
 	while (i < personNum2)// Вывод второй очереди
 	{
 		cout << secondQueue[i].name << "[";
-		if (firstElement == true)
+
+		if (firstElement)
 		{
-			timeSecondStart = secondQueue[i].time;
+			timeSecondEnd = secondQueue[i].time;
+			cout << timeSecondStart << ", " << timeSecondEnd << "] ";
+			i++;
+			timeSecondStart = timeSecondEnd;
+			firstElement = false;
 		}
-		cout << timeSecondStart << ", ", i++;
-		if (i == personNum2)
+		else
 		{
-			cout << "END]";
-			break;
+			timeSecondEnd = timeSecondStart + secondQueue[i].time;
+			cout << timeSecondStart << ", " << timeSecondEnd << "] ";
+			i++;
+			timeSecondStart = timeSecondEnd;
 		}
-		timeSecondEnd = timeSecondStart + secondQueue[i].time;
-		cout << timeSecondEnd << "] ";
-		timeSecondStart = timeSecondEnd;
-		firstElement = false;
 	}
-
-
-
-	/*cout << "1: ";
-	for (int i = 0; i < personNum1; i++)
-	{
-		cout << firstQueue[i].name;
-		if (i == personNum1 - 1)
-		{
-			cout << '[' << firstQueue[i].time << ']';
-			break;
-		}
-		cout << '[' << firstQueue[i].time << ']' << " ";
-	}
-	cout << endl;
-
-
-	cout << "2: ";
-	for (int i = 0; i < personNum2; i++)
-	{
-		cout << secondQueue[i].name;
-		if (i == personNum2 - 1)
-		{
-			cout << '[' << secondQueue[i].time << ']';
-			break;
-		}
-		cout << '[' << secondQueue[i].time << ']' << " ";
-	}*/
-
 }
 
