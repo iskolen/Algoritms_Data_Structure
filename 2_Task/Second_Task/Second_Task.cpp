@@ -22,6 +22,9 @@
 
 using namespace std;
 
+
+
+
 int main()
 {
 	struct personsFirstQueue
@@ -186,13 +189,88 @@ int main()
 
 	cout << endl;
 
+	const string separation = "     ";
+	const string absent = "              ";
 
+	int timeFirstSum, timeSecondSum;
+	int timeFirstStart, timeFirstEnd;
+	int timeSecondStart, timeSecondEnd;
+	int largQueue;
+	bool firstElement = true;
+	timeFirstStart = 0;
+	int i = 0;
+	timeFirstSum = 0;
+	timeSecondSum = 0;
+	timeSecondStart = 0;
+	if (personNum1 > personNum2)
+	{
+		largQueue = personNum1;
+	}
+	else
+	{
+		largQueue = personNum2;
+	}
+
+	cout << "1 очередь" << separation << "2 очередь" << endl;
+	while (i < largQueue)
+	{
+		if (firstElement)
+		{
+			cout << firstQueue[i].name << "[";
+			timeFirstEnd = firstQueue[i].time;
+			cout << timeFirstStart << ", " << timeFirstEnd << "] ";
+			timeFirstStart = timeFirstEnd;
+			cout << separation;
+
+			cout << secondQueue[i].name << "[";
+			timeSecondEnd = secondQueue[i].time;
+			cout << timeSecondStart << ", " << timeSecondEnd << "] ";
+			timeSecondStart = timeSecondEnd;
+			firstElement = false;
+			i++;
+			cout << endl;
+		}
+		if (i < personNum1)
+		{
+			cout << firstQueue[i].name << "[";
+			timeFirstEnd = timeFirstStart + firstQueue[i].time;
+			cout << timeFirstStart << ", " << timeFirstEnd << "] ";
+			timeFirstStart = timeFirstEnd;
+			cout << separation;
+		}
+		else
+		{
+			cout << absent;
+		}
+
+		if (i < personNum2)
+		{
+			cout << secondQueue[i].name << "[";
+			timeSecondEnd = timeSecondStart + secondQueue[i].time;
+			cout << timeSecondStart << ", " << timeSecondEnd << "] ";
+			timeSecondStart = timeSecondEnd;
+			i++;
+			cout << endl;
+		}
+		else
+		{
+			i++;
+			cout << endl;
+		}
+	}
+
+
+
+
+	/*int timeFirstSum, timeSecondSum;
 	int timeFirstStart, timeFirstEnd;
 	int timeSecondStart, timeSecondEnd;
 	bool firstElement = true;
 	timeFirstStart = 0;
 	cout << "1: ";
 	int i = 0;
+	timeFirstSum = 0;
+	timeSecondSum = 0;
 	while (i < personNum1)// Вывод первой очереди
 	{
 		cout << firstQueue[i].name << "[";
@@ -201,6 +279,14 @@ int main()
 		{
 			timeFirstEnd = firstQueue[i].time;
 			cout << timeFirstStart << ", " << timeFirstEnd << "] ";
+			if (i < personNum1)
+			{
+				timeFirstSum += firstQueue[i].time;
+			}
+			if (i < personNum2)
+			{
+				timeSecondSum += secondQueue[i].time;
+			}
 			i++;
 			timeFirstStart = timeFirstEnd;
 			firstElement = false;
@@ -209,6 +295,14 @@ int main()
 		{
 			timeFirstEnd = timeFirstStart + firstQueue[i].time;
 			cout << timeFirstStart << ", " << timeFirstEnd << "] ";
+			if (i < personNum1)
+			{
+				timeFirstSum += firstQueue[i].time;
+			}
+			if (i < personNum2)
+			{
+				timeSecondSum += secondQueue[i].time;
+			}
 			i++;
 			timeFirstStart = timeFirstEnd;
 		}
@@ -238,5 +332,20 @@ int main()
 			timeSecondStart = timeSecondEnd;
 		}
 	}
+
+	cout << endl << endl;
+	cout << "Сумма времени первой очереди: " << timeFirstSum << endl;
+	cout << "Сумма времени второй очереди: " << timeSecondSum << endl;*/
 }
 
+/*int deliteId1 = delitePerson[i].firstId;
+if (deliteId1 == i)
+{
+	int deliteId2 = delitePerson[i].secondId;
+	for (int j = deliteId2; j < personNum2; j++)
+	{
+		secondQueue[j].name = secondQueue[j + 1].name;
+		secondQueue[j].time = secondQueue[j + 1].time;
+	}
+	personNum2--;
+}*/
