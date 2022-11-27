@@ -216,20 +216,55 @@ int main()
 	{
 		if (firstElement)
 		{
+			int deliteId1 = delitePerson[i].firstId;
+			if (deliteId1 == i)
+			{
+				int deliteId2 = delitePerson[i].secondId;
+				for (int j = deliteId2; j < personNum2; j++)
+				{
+					secondQueue[j].name = secondQueue[j + 1].name;
+					secondQueue[j].time = secondQueue[j + 1].time;
+				}
+				personNum2--;
+			}
 			cout << firstQueue[i].name << "[";
 			timeFirstEnd = firstQueue[i].time;
 			cout << timeFirstStart << ", " << timeFirstEnd << "] ";
+
+			timeFirstSum += firstQueue[i].time;
+			timeSecondSum += secondQueue[i].time;
+
+
 			timeFirstStart = timeFirstEnd;
 			cout << separation;
+
 
 			cout << secondQueue[i].name << "[";
 			timeSecondEnd = secondQueue[i].time;
 			cout << timeSecondStart << ", " << timeSecondEnd << "] ";
+
 			timeSecondStart = timeSecondEnd;
 			firstElement = false;
 			i++;
 			cout << endl;
 		}
+
+		timeFirstSum += firstQueue[i].time;
+		if (i < personNum2)
+		{
+			timeSecondSum += secondQueue[i].time;
+		}
+
+		if (timeSecondSum < timeFirstSum)
+		{
+			for (int j = i; j < personNum1; j++)
+			{
+				firstQueue[j].name = firstQueue[j + 1].name;
+				firstQueue[j].time = firstQueue[j + 1].time;
+			}
+			personNum1--;
+		}
+
 		if (i < personNum1)
 		{
 			cout << firstQueue[i].name << "[";
@@ -258,6 +293,11 @@ int main()
 			cout << endl;
 		}
 	}
+
+	cout << endl;
+	cout << timeFirstSum << endl;
+	cout << timeSecondSum << endl;
+
 
 
 
