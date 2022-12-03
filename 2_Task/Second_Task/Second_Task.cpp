@@ -18,46 +18,109 @@
 #include <string>
 #include <cstring>
 
-
-
 using namespace std;
 
 
+struct personsFirstQueue
+{
+	string name;
+	int time;
+};
+
+struct personsSecondQueue
+{
+	string name;
+	int time;
+};
+
+struct delitePersons
+{
+	int firstId;
+	int secondId;
+};
+
+
+const int maxElements = 100;
+const string separation = "     ";
+const string absent = "              ";
+personsFirstQueue firstQueue[maxElements];
+personsSecondQueue secondQueue[maxElements];
+delitePersons delitePerson[maxElements];
+
+int printFirst(int i, int timeFirstEnd, int timeFirstStart)
+{
+	cout << firstQueue[i].name << "[";
+    timeFirstEnd = firstQueue[i].time + timeFirstStart;
+	cout << timeFirstStart << ", " << timeFirstEnd << "] ";
+	timeFirstStart = timeFirstEnd;
+	cout << separation;
+	return timeFirstEnd, timeFirstStart;
+}
+
+int printSecond(int i, int timeSecondEnd, int timeSecondStart)
+{
+	cout << secondQueue[i].name << "[";
+	timeSecondEnd = secondQueue[i].time + timeSecondStart;
+	cout << timeSecondStart << ", " << timeSecondEnd << "] ";
+	timeSecondStart = timeSecondEnd;
+	return timeSecondEnd, timeSecondStart;
+}
+
+
+int deleteFromFirst(int i, int personNum, int personNum1)
+{
+
+	int deliteId2 = delitePerson[i].secondId;//Удаление элемента
+	int deliteId1 = delitePerson[i].firstId;
+	if (deliteId2 == i && deliteId1 != deliteId2)
+	{
+		for (int j = deliteId1; j < personNum1; j++)
+		{
+			firstQueue[j].name = firstQueue[j + 1].name;
+			firstQueue[j].time = firstQueue[j + 1].time;
+		}
+		personNum1--;
+		for (int i = 0; i < personNum; i++)
+		{
+			delitePerson[i + 1].firstId--;
+		}
+	}
+	return personNum1;
+}
+
+int deleteFromSecond(int i, int personNum, int personNum2)
+{
+	int deliteId1 = delitePerson[i].firstId;//Удаление элемента
+	int deliteId2 = delitePerson[i].secondId;
+	if (deliteId1 == i)
+	{
+		for (int j = deliteId2; j < personNum2; j++)
+		{
+			secondQueue[j].name = secondQueue[j + 1].name;
+			secondQueue[j].time = secondQueue[j + 1].time;
+		}
+		personNum2--;
+		for (int i = 0; i < personNum; i++)
+		{
+			delitePerson[i + 1].secondId--;
+		}
+	}
+	return personNum2;
+}
 
 
 int main()
 {
-	struct personsFirstQueue
-	{
-		string name;
-		int time;
-	};
-
-	struct personsSecondQueue
-	{
-		string name;
-		int time;
-	};
-
-	const int maxElements = 100;
-	personsFirstQueue firstQueue[maxElements];
-	personsSecondQueue secondQueue[maxElements];
-	
-	string line, name, temp;
+	string line, name, temp, fileName;
 	int lineNum, time, personNum1, personNum2;
 	char currCh;
 
-	personNum1 = 0;
-	personNum2 = 0;
-	time = 0;
-	name = "";
-	temp = "";
+	personNum1 = 0, personNum2 = 0, time = 0, lineNum = 0;
+	name, temp = "";
 	currCh = ' ';
-	lineNum = 0;
 
 
 	setlocale(LC_ALL, "RUS");
-	string fileName;
 	cout << "Введите имя входного файла: ";
 	cin >> fileName;
 	ifstream fileInput(fileName);// Открываем файл
@@ -67,7 +130,6 @@ int main()
 		return 0;
 	}
 	cout << endl;
-
 
 	while (getline(fileInput, line))// Построчное чтение файла
 	{
@@ -99,7 +161,7 @@ int main()
 			{
 				while (currCh != '(')
 				{
-					if (currCh == '\0')
+					if (currCh == '\0')// Если время отсутсвтует
 					{
 						system("cls");
 						cout << "Ошибка: Время задано неправильно (отсутсвует)";
@@ -120,7 +182,7 @@ int main()
 
 				while (currCh != ')')
 				{
-					if (!isdigit(currCh))
+					if (!isdigit(currCh))// Если время не число
 					{
 						system("cls");
 						cout << "Ошибка: Время задано неправильно (не число)";
@@ -131,8 +193,6 @@ int main()
 					currCh = line[i], i++;
 				}
 				time = stoi(temp);
-				
-
 
 				if (lineNum == 1)
 				{
@@ -147,7 +207,7 @@ int main()
 					personNum2++;
 				}
 
-				cout << "  Время в очереди: "<< time << endl;
+				cout << "  Время в очереди: " << time << endl;
 				temp = "";
 				name = "";
 				time = 0;
@@ -171,14 +231,6 @@ int main()
 
 	cout << endl;
 
-
-	struct delitePersons
-	{
-		int firstId;
-		int secondId;
-	};
-
-	delitePersons delitePerson[maxElements];
 	string namePerson1, namePerson2;
 	int personNum;
 	personNum = 0;
@@ -220,24 +272,17 @@ int main()
 		int id1 = delitePerson[i].firstId;
 		int id2 = delitePerson[i].secondId;
 		cout << "ID " << i << "-го элемента ";
-		cout << "[" <<  id1 << "]" << " - " << "[" << id2 << "]" << endl;
+		cout << "[" << id1 << "]" << " - " << "[" << id2 << "]" << endl;
 	}
 
 	cout << endl;
 
-	const string separation = "     ";
-	const string absent = "              ";
-
-	int timeFirstSum, timeSecondSum;
-	int timeFirstStart, timeFirstEnd;
-	int timeSecondStart, timeSecondEnd;
+	int timeFirstSum, timeSecondSum, timeFirstStart, timeFirstEnd, timeSecondStart, timeSecondEnd;
 	int largQueue;
 	bool firstElement = true;
-	timeFirstStart = 0;
 	int i = 0;
-	timeFirstSum = 0;
-	timeSecondSum = 0;
-	timeSecondStart = 0;
+	timeFirstEnd = 0; timeFirstStart = 0; timeSecondEnd = 0; timeSecondStart = 0;
+
 	if (personNum1 > personNum2)
 	{
 		largQueue = personNum1;
@@ -252,53 +297,12 @@ int main()
 	{
 		if (firstElement)
 		{
-			int deliteId1 = delitePerson[i].firstId;//Удаление элемента
-			int deliteId2 = delitePerson[i].secondId;
-			if (deliteId1 == i)
-			{
-				for (int j = deliteId2; j < personNum2; j++)
-				{
-					secondQueue[j].name = secondQueue[j + 1].name;
-					secondQueue[j].time = secondQueue[j + 1].time;
-				}
-				personNum2--;
-				for (int i = 0; i < personNum; i++)
-				{
-					delitePerson[i + 1].secondId--;
-				}
-			}
+			personNum2 = deleteFromSecond(i, personNum, personNum2);
+			(timeFirstEnd, timeFirstStart) = printFirst(i, timeFirstEnd, timeFirstStart);
 
 
-			cout << firstQueue[i].name << "[";
-			timeFirstEnd = firstQueue[i].time;
-			cout << timeFirstStart << ", " << timeFirstEnd << "] ";
-			timeFirstStart = timeFirstEnd;
-			cout << separation;
-
-
-
-
-			deliteId2 = delitePerson[i].secondId;//Удаление элемента
-			deliteId1 = delitePerson[i].firstId;
-			if (deliteId2 == i && deliteId1 != deliteId2)
-			{
-				for (int j = deliteId1; j < personNum1; j++)
-				{
-					firstQueue[j].name = firstQueue[j + 1].name;
-					firstQueue[j].time = firstQueue[j + 1].time;
-				}
-				personNum1--;
-				for (int i = 0; i < personNum; i++)
-				{
-					delitePerson[i + 1].firstId--;
-				}
-			}
-			cout << secondQueue[i].name << "[";
-			timeSecondEnd = secondQueue[i].time;
-			cout << timeSecondStart << ", " << timeSecondEnd << "] ";
-			timeSecondStart = timeSecondEnd;
-
-
+			personNum1 = deleteFromFirst(i, personNum, personNum1);
+			(timeSecondEnd, timeSecondStart) = printSecond(i, timeSecondEnd, timeSecondStart);
 
 			firstElement = false;
 			i++;
@@ -307,28 +311,8 @@ int main()
 
 		if (i < personNum1)
 		{
-			int deliteId1 = delitePerson[i].firstId;//Удаление элемента
-			int deliteId2 = delitePerson[i].secondId;
-			if (deliteId1 == i)
-			{
-				for (int j = deliteId2; j < personNum2; j++)
-				{
-					secondQueue[j].name = secondQueue[j + 1].name;
-					secondQueue[j].time = secondQueue[j + 1].time;
-				}
-				personNum2--;
-				for (int i = 0; i < personNum; i++)
-				{
-					delitePerson[i + 1].secondId--;
-				}
-			}
-
-
-			cout << firstQueue[i].name << "[";
-			timeFirstEnd = timeFirstStart + firstQueue[i].time;
-			cout << timeFirstStart << ", " << timeFirstEnd << "] ";
-			timeFirstStart = timeFirstEnd;
-			cout << separation;
+			personNum2 = deleteFromSecond(i, personNum, personNum2);
+			(timeFirstEnd, timeFirstStart) = printFirst(i, timeFirstEnd, timeFirstStart);
 		}
 		else
 		{
@@ -337,26 +321,8 @@ int main()
 
 		if (i < personNum2)
 		{
-			int deliteId2 = delitePerson[i].secondId;//Удаление элемента
-			int deliteId1 = delitePerson[i].firstId;
-			if (deliteId2 == i && deliteId1 != deliteId2)
-			{
-				for (int j = deliteId1; j < personNum1; j++)
-				{
-					firstQueue[j].name = firstQueue[j + 1].name;
-					firstQueue[j].time = firstQueue[j + 1].time;
-				}
-				personNum1--;
-				for (int i = 0; i < personNum; i++)
-				{
-					delitePerson[i + 1].firstId--;
-				}
-			}
-
-			cout << secondQueue[i].name << "[";
-			timeSecondEnd = secondQueue[i].time;
-			cout << timeSecondStart << ", " << timeSecondEnd << "] ";
-			timeSecondStart = timeSecondEnd;
+			personNum1 = deleteFromFirst(i, personNum, personNum1);
+			(timeSecondEnd, timeSecondStart) = printSecond(i, timeSecondEnd, timeSecondStart);
 
 			i++;
 			cout << endl;
@@ -370,6 +336,7 @@ int main()
 
 	cout << endl;
 
+}
 
 
 	/*int deliteId1 = delitePerson[i].firstId;//Удаление элемента
@@ -464,7 +431,7 @@ int main()
 	cout << endl << endl;
 	cout << "Сумма времени первой очереди: " << timeFirstSum << endl;
 	cout << "Сумма времени второй очереди: " << timeSecondSum << endl;*/
-}
+
 
 /*int deliteId1 = delitePerson[i].firstId;
 if (deliteId1 == i)
