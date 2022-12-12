@@ -33,11 +33,6 @@ struct personsSecondQueue
 	int time;
 };
 
-struct delitePersons
-{
-	int firstId;
-	int secondId;
-};
 
 
 const int maxElements = 100;
@@ -45,12 +40,11 @@ const string separation = "     ";
 const string absent = "              ";
 personsFirstQueue firstQueue[maxElements];
 personsSecondQueue secondQueue[maxElements];
-delitePersons delitePerson[maxElements];
 
-int timeCountFirst(int &i, int &timeFirstEnd, int &timeFirstStart, int &timeFirstSum)
+int timeCountFirst(int &iFirst, int &timeFirstEnd, int &timeFirstStart, int &timeFirstSum)
 {
 	timeFirstStart = timeFirstEnd;
-	timeFirstEnd = firstQueue[i].time + timeFirstStart;
+	timeFirstEnd = firstQueue[iFirst].time + timeFirstStart;
 	if (timeFirstEnd != 0)
 	{
 		timeFirstSum = timeFirstEnd;
@@ -58,10 +52,10 @@ int timeCountFirst(int &i, int &timeFirstEnd, int &timeFirstStart, int &timeFirs
 	return (timeFirstEnd, timeFirstStart, timeFirstSum);
 }
 
-int timeCountSecond(int &i, int &timeSecondEnd, int &timeSecondStart, int &timeSecondSum)
+int timeCountSecond(int &iSecond, int &timeSecondEnd, int &timeSecondStart, int &timeSecondSum)
 {
 	timeSecondStart = timeSecondEnd;
-	timeSecondEnd = secondQueue[i].time + timeSecondStart;
+	timeSecondEnd = secondQueue[iSecond].time + timeSecondStart;
 	if (timeSecondEnd != 0)
 	{
 		timeSecondSum = timeSecondEnd;
@@ -69,24 +63,28 @@ int timeCountSecond(int &i, int &timeSecondEnd, int &timeSecondStart, int &timeS
 	return (timeSecondEnd, timeSecondStart, timeSecondSum);
 }
 
-int deleteFromBoth(int &i, int &personNum1, int &personNum2)
+int deleteFromBoth(int &iFirst, int &iSecond, int &personNum1, int &personNum2)
 {
-	string currNameFirst = firstQueue[i].name;
-	string currNameSecond = secondQueue[i].name;
+	string currNameFirst = firstQueue[iFirst].name;
+	string currNameSecond = secondQueue[iSecond].name;
 	if (currNameFirst == currNameSecond)
 	{
-		secondQueue[i].name = "";
-		secondQueue[i].time = 0;
+		for (int j = iSecond; j < personNum2; j++)
+		{
+			secondQueue[j].name = secondQueue[j + 1].name;
+			secondQueue[j].time = secondQueue[j + 1].time;
+		}
+		personNum2--;
 
 		return(personNum1, personNum2);
 	}
 
 }
 
-int deleteFromFirst(int i, int personNum1)
+int deleteFromFirst(int &iFirst, int &iSecond, int personNum1)
 {
-	string currName = secondQueue[i].name;
-	for (int j = i; j < personNum1; j++)
+	string currName = secondQueue[iSecond].name;
+	for (int j = iFirst; j < personNum1; j++)
 	{
 		if (currName == firstQueue[j].name)
 		{
@@ -103,10 +101,10 @@ int deleteFromFirst(int i, int personNum1)
 	return personNum1;
 }
 
-int deleteFromSecond(int &i, int &personNum2)
+int deleteFromSecond(int &iFirst, int &iSecond, int &personNum2)
 {
-	string currName = firstQueue[i].name;
-	for (int j = i; j < personNum2; j++)
+	string currName = firstQueue[iFirst].name;
+	for (int j = iSecond; j < personNum2; j++)
 	{
 		if (currName == secondQueue[j].name)
 		{
@@ -123,9 +121,9 @@ int deleteFromSecond(int &i, int &personNum2)
 	return personNum2;
 }
 
-int deleteCurrFromFirst(int &i, int &personNum1)
+int deleteCurrFromFirst(int &iFirst, int &personNum1)
 {
-	for (int j = i; j < personNum1; j++)
+	for (int j = iFirst; j < personNum1; j++)
 	{
 		firstQueue[j].name = firstQueue[j + 1].name;
 		firstQueue[j].time = firstQueue[j + 1].time;
@@ -135,9 +133,9 @@ int deleteCurrFromFirst(int &i, int &personNum1)
 	return personNum1;
 }
 
-int deleteCurrFromSecond(int &i, int &personNum2)
+int deleteCurrFromSecond(int &iSecond, int &personNum2)
 {
-	for (int j = i; j < personNum2; j++)
+	for (int j = iSecond; j < personNum2; j++)
 	{
 		secondQueue[j].name = secondQueue[j + 1].name;
 		secondQueue[j].time = secondQueue[j + 1].time;
@@ -148,27 +146,42 @@ int deleteCurrFromSecond(int &i, int &personNum2)
 }
 
 
-void printCurrFirst(int i, int timeFirstEnd, int timeFirstStart)
+void printCurrFirst(int iFirst, int timeFirstEnd, int timeFirstStart)
 {
-	cout << firstQueue[i].name << "(" << timeFirstStart << ", " << timeFirstEnd << ") [1] " << endl;
+	cout << firstQueue[iFirst].name << "(" << timeFirstStart << ", " << timeFirstEnd << ") [1] " << endl;
 }
 
-void printCurrSecond(int i, int timeSecondEnd, int timeSecondStart)
+void printCurrSecond(int iSecond, int timeSecondEnd, int timeSecondStart)
 {
-	cout << secondQueue[i].name << "(" << timeSecondStart << ", " << timeSecondEnd << ") [2] " << endl;
+	cout << secondQueue[iSecond].name << "(" << timeSecondStart << ", " << timeSecondEnd << ") [2] " << endl;
 }
 
-int transitionToSecond(int &i, int &personNum1, int &personNum2)
+int transitionToSecond(int &iFirst, int &iSecond, int &personNum1, int &personNum2)
 {
-	for (int m = personNum2; m > i; m--)
+	for (int m = personNum2; m > iSecond; m--)
 	{
 		secondQueue[m].name = secondQueue[m - 1].name;
 		secondQueue[m].time = secondQueue[m - 1].time;
 	}
 	personNum2++;
-	secondQueue[i].name = firstQueue[i].name;
-	secondQueue[i].time = firstQueue[i].time;
-	personNum1 = deleteCurrFromFirst(i, personNum1);
+	secondQueue[iSecond].name = firstQueue[iFirst].name;
+	secondQueue[iSecond].time = firstQueue[iFirst].time;
+	personNum1 = deleteCurrFromFirst(iFirst, personNum1);
+
+	return(personNum1, personNum2);
+}
+
+int transitionToFirst(int &iFirst, int &iSecond, int &personNum1, int &personNum2)
+{
+	for (int m = personNum1; m > iFirst; m--)
+	{
+		firstQueue[m].name = firstQueue[m - 1].name;
+		firstQueue[m].time = firstQueue[m - 1].time;
+	}
+	personNum1++;
+	firstQueue[iFirst].name = secondQueue[iSecond].name;
+	firstQueue[iFirst].time = secondQueue[iSecond].time;
+	personNum2 = deleteCurrFromSecond(iSecond, personNum2);
 
 	return(personNum1, personNum2);
 }
@@ -296,13 +309,13 @@ int main()
 
 	cout << endl;
 
-	int timeFirstSum, timeSecondSum, timeFirstStart, timeFirstEnd, timeSecondStart, timeSecondEnd;
+	int timeFirstSum = 0, timeSecondSum = 0, timeFirstStart = 0, timeFirstEnd = 0, timeSecondStart = 0, timeSecondEnd = 0, difference = 0;
 	int largQueue;
 	bool firstElement = true;
 	bool firstBusy, secondBusy;
-	int i = 0;
+	int iFirst = 0;
+	int iSecond = 0;
 	firstBusy = false; secondBusy = false;
-	timeFirstEnd = 0; timeFirstStart = 0; timeSecondEnd = 0; timeSecondStart = 0; timeFirstSum = 0; timeSecondSum = 0;
 
 	if (personNum1 > personNum2)
 	{
@@ -313,76 +326,91 @@ int main()
 		largQueue = personNum2;
 	}
 
-	while (i < largQueue)
+	while (firstQueue[iFirst].name != "" || secondQueue[iSecond].name != "")
 	{
 		if (firstElement)
 		{
-			if (firstQueue[i].name == secondQueue[i].name)
+			if (firstQueue[iFirst].name == secondQueue[iSecond].name)
 			{
-				(personNum1, personNum2) = deleteFromBoth(i, personNum1, personNum2);
+				(personNum1, personNum2) = deleteFromBoth(iFirst, iSecond, personNum1, personNum2);
+				(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
+				iFirst++;
 			}
 			else
 			{
-				personNum2 = deleteFromSecond(i, personNum2);
-				(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(i, timeFirstEnd, timeFirstStart, timeFirstSum);
+				personNum2 = deleteFromSecond(iFirst, iSecond, personNum2);
+				(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
 
-				personNum1 = deleteFromFirst(i, personNum1);
-				(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(i, timeSecondEnd, timeSecondStart, timeSecondSum);
+				personNum1 = deleteFromFirst(iFirst, iSecond, personNum1);
+				(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(iSecond, timeSecondEnd, timeSecondStart, timeSecondSum);
+				iFirst++;
+				iSecond++;
 			}
 			firstElement = false;
-			i++;
 		}
 
-		if (i < personNum1)
+		if (iFirst < personNum1) // Первая очередь
 		{
-			timeSecondSum += secondQueue[i].time;
-			if (timeFirstSum > timeSecondSum)
-			{
-				firstBusy = true;
-			}
 
-			if (firstQueue[i].name == secondQueue[i].name)
+			if (firstQueue[iFirst].name == secondQueue[iSecond].name && firstQueue[iFirst].name != "")
 			{
-				(personNum1, personNum2) = deleteFromBoth(i, personNum1, personNum2);
+				(personNum1, personNum2) = deleteFromBoth(iFirst, iSecond, personNum1, personNum2);
+				(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
+				iFirst++;
 			}
 			else
 			{
-				if (firstBusy)
+				difference = (timeFirstSum - timeSecondSum);
+				
+				if (difference >= firstQueue[iFirst].time)
 				{
-					(personNum1, personNum2) = transitionToSecond(i, personNum1, personNum2);
-					(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(i, timeSecondEnd, timeSecondStart, timeSecondSum);
-					firstBusy = false;
+					while (difference >= firstQueue[iFirst].time && firstQueue[iFirst].time != 0)
+					{
+						(personNum1, personNum2) = transitionToSecond(iFirst, iSecond, personNum1, personNum2);
+						(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(iSecond, timeSecondEnd, timeSecondStart, timeSecondSum);
+						difference = (timeFirstSum - timeSecondSum);
+						iSecond++;
+					}
+					iFirst++;
 				}
 				else
 				{
-					personNum2 = deleteFromSecond(i, personNum2);
-					(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(i, timeFirstEnd, timeFirstStart, timeFirstSum);
+					personNum2 = deleteFromSecond(iFirst, iSecond, personNum2);
+					(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
+					iFirst++;
 				}
+
 			}
 		}
-
-		if (i < personNum2)
+		if (iSecond <= personNum2) // Вторая очередь
 		{
-			if (timeSecondSum > timeFirstSum)
-			{
-				secondBusy = true;
-			}
 
-			if (firstQueue[i].name == secondQueue[i].name)
+			if (firstQueue[iFirst].name == secondQueue[iSecond].name && firstQueue[iFirst].name != "")
 			{
-				(personNum1, personNum2) = deleteFromBoth(i, personNum1, personNum2);
+				(personNum1, personNum2) = deleteFromBoth(iFirst, iSecond, personNum1, personNum2);
+				(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
+				iFirst++;
 			}
 			else
 			{
-				personNum1 = deleteFromFirst(i, personNum1);
-				(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(i, timeSecondEnd, timeSecondStart, timeSecondSum);
+				difference = (timeSecondSum - timeFirstSum);
+				if (difference >= secondQueue[iSecond].time)
+				{
+					while (difference >= secondQueue[iSecond].time && secondQueue[iSecond].time != 0)
+					{
+						(personNum1, personNum2) = transitionToFirst(iFirst, iSecond, personNum1, personNum2);
+						(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
+						difference = (timeSecondSum - timeFirstSum);
+						iFirst++;
+					}
+				}
+				else
+				{
+					personNum1 = deleteFromFirst(iFirst, iSecond, personNum1);
+					(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(iSecond, timeSecondEnd, timeSecondStart, timeSecondSum);
+					iSecond++;
+				}
 			}
-			
-			i++;
-		}
-		else
-		{
-			i++;
 		}
 	}
 
@@ -394,7 +422,6 @@ int main()
 	{
 		timeFirstStart = timeFirstEnd;
 		timeFirstEnd = firstQueue[i].time + timeFirstStart;
-
 		cout << firstQueue[i].name << "[" << timeFirstStart << ", " << timeFirstEnd << "]" ;
 		if (i == personNum1 - 1)
 		{
@@ -408,10 +435,6 @@ int main()
 	{
 		timeSecondStart = timeSecondEnd;
 		timeSecondEnd = secondQueue[i].time + timeSecondStart;
-		if (secondQueue[i].name == "")
-		{
-			continue;
-		}
 		cout << secondQueue[i].name << "[" << timeSecondStart << ", " << timeSecondEnd << "]";
 		if (i == personNum2 - 1)
 		{
@@ -421,3 +444,17 @@ int main()
 	}
 
 }
+
+/*timeSecondSum += secondQueue[i].time;
+if (timeFirstSum > timeSecondSum)
+{
+	firstBusy = true;
+}*/
+
+/*if (firstBusy)
+{
+	(personNum1, personNum2) = transitionToSecond(i, personNum1, personNum2);
+	(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(i, timeSecondEnd, timeSecondStart, timeSecondSum);
+	firstBusy = false;
+}
+else*/
