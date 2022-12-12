@@ -20,7 +20,6 @@
 
 using namespace std;
 
-
 struct personsFirstQueue
 {
 	string name;
@@ -33,13 +32,95 @@ struct personsSecondQueue
 	int time;
 };
 
-
-
 const int maxElements = 100;
-const string separation = "     ";
-const string absent = "              ";
 personsFirstQueue firstQueue[maxElements];
 personsSecondQueue secondQueue[maxElements];
+
+void inputFormat()
+{
+	cout << endl << endl << "Формат входного файла:" << endl << endl;
+	cout << "1: NAME(TIME) NAME(TIME) NAME(TIME)" << endl;
+	cout << "2: NAME(TIME) NAME(TIME)" << endl << endl;
+
+	cout << "Правила ввода:" << endl << endl;
+	cout << "1) В одной очереди не может быть двух одинаковых человек" << endl;
+	cout << "2) В конце строки не должно присутствовать пробелов" << endl;
+	cout << "3) Время не может быть меньше 0";
+}
+
+bool dataValidation(int personNum1, int personNum2)
+{
+	bool error = false;
+	for (int s = 0; s < personNum1; s++)// Проверка, на наличие в первой очереди одного и того же человека
+	{
+		string currFirstName = firstQueue[s].name;
+		for (int i = s + 1; i < personNum1; i++)
+		{
+			string verifiableFirstName = firstQueue[i].name;
+			if (currFirstName == verifiableFirstName)
+			{
+				system("cls");
+				cout << "Ошибка: В первой очереди два одинаковых человека";
+				inputFormat();
+				cout << endl;
+
+				error = true;
+				return error;
+			}
+		}
+	}
+
+	for (int s = 0; s < personNum2; s++)// Проверка, на наличие во второй очереди одного и того же человека
+	{
+		string currSecondName = secondQueue[s].name;
+		for (int i = s + 1; i < personNum2; i++)
+		{
+			string verifiableSecondName = secondQueue[i].name;
+			if (currSecondName == verifiableSecondName)
+			{
+				system("cls");
+				cout << "Ошибка: Во второй очереди два одинаковых человека";
+				inputFormat();
+				cout << endl;
+
+				error = true;
+				return error;
+			}
+		}
+	}
+
+	for (int s = 0; s < personNum1; s++)
+	{
+		if (firstQueue[s].time <= 0)
+		{
+			system("cls");
+			cout << "Ошибка: У человека в первой очереди время меньше 0!";
+			inputFormat();
+			cout << endl;
+
+			error = true;
+			return error;
+		}
+		
+	}
+
+	for (int s = 0; s < personNum2; s++)
+	{
+		if (secondQueue[s].time <= 0)
+		{
+			system("cls");
+			cout << "Ошибка: У человека в первой очереди время меньше 0!";
+			inputFormat();
+			cout << endl;
+
+			error = true;
+			return error;
+		}
+
+	}
+
+	return error;
+}
 
 int timeCountFirst(int &iFirst, int &timeFirstEnd, int &timeFirstStart, int &timeFirstSum)
 {
@@ -145,7 +226,6 @@ int deleteCurrFromSecond(int &iSecond, int &personNum2)
 	return personNum2;
 }
 
-
 void printCurrFirst(int iFirst, int timeFirstEnd, int timeFirstStart)
 {
 	cout << firstQueue[iFirst].name << "(" << timeFirstStart << ", " << timeFirstEnd << ") [1] " << endl;
@@ -186,275 +266,297 @@ int transitionToFirst(int &iFirst, int &iSecond, int &personNum1, int &personNum
 	return(personNum1, personNum2);
 }
 
+string getUserAnswer()
+{
+	string fileName;
+	cout << "Введите имя входного файла('0', если хотите выйти): ";
+	cin >> fileName;
+	return fileName;
+}
 
 int main()
 {
 	string line, name, temp, fileName;
 	int lineNum, time, personNum1, personNum2;
 	char currCh;
-
-	personNum1 = 0, personNum2 = 0, time = 0, lineNum = 0;
-	name, temp = "";
-	currCh = ' ';
-
-
 	setlocale(LC_ALL, "RUS");
-	cout << "Введите имя входного файла: ";
-	cin >> fileName;
-	ifstream fileInput(fileName);// Открываем файл
-	if (!fileInput)
+
+	fileName = getUserAnswer();
+	while (fileName != "0")
 	{
-		cout << "Файл не найден!" << endl;
-		return 0;
-	}
-	cout << endl;
-
-	while (getline(fileInput, line))// Построчное чтение файла
-	{
-		int i = 0;
-		lineNum++;
-		int len = line.length();
-		if (len == 3)
+		fstream fileInput(fileName);
+		if (fileInput.good())
 		{
-			system("cls");
-			cout << "Ошибка: Очередь пуста";
-			cout << endl;
-			return 0;
-		}
-		while ((i != len) && (i < len))// Обработка каждой строки
-		{
-			if (lineNum == 2)// Переход на новую строку
+			personNum1 = 0, personNum2 = 0, time = 0, lineNum = 0;
+			name, temp = "";
+			currCh = ' ';
+			while (getline(fileInput, line))// Построчное чтение файла
 			{
-				cout << endl;
-				lineNum = 10;
-			}
-
-			if (i == 0)// Пропуск обозначение номера очереди 
-			{
-				i = 3;
-			}
-
-			currCh = line[i], i++;
-			if (currCh != '(')// Считывание имён и времени
-			{
-				while (currCh != '(')
+				int i = 0;
+				lineNum++;
+				int len = line.length();
+				if (len == 3)
 				{
-					if (currCh == '\0')// Если время отсутсвтует
+					system("cls");
+					cout << "Ошибка: Очередь пуста!";
+					inputFormat();
+					cout << endl;
+					return 0;
+				}
+				while ((i != len) && (i < len))// Обработка каждой строки
+				{
+					if (lineNum == 2)// Переход на новую строку
 					{
-						system("cls");
-						cout << "Ошибка: Время задано неправильно (отсутсвует)";
 						cout << endl;
-						return 0;
+						lineNum = 10;
 					}
-					if (currCh == ' ')
+
+					if (i == 0)// Пропуск обозначение номера очереди 
 					{
+
+						i = 3;
+					}
+
+					currCh = line[i], i++;
+					if (currCh != '(')// Считывание имён и времени
+					{
+						while (currCh != '(')
+						{
+							if (currCh == '\0')// Если время отсутсвтует
+							{
+								system("cls");
+								cout << "Ошибка: Время задано неправильно (отсутсвует)";
+								inputFormat();
+								cout << endl;
+								return 0;
+							}
+							if (currCh == ' ')
+							{
+								currCh = line[i], i++;
+								if (currCh == '\0')
+								{
+									system("cls");
+									cout << "Ошибка: В конце строки лишний символ!";
+									inputFormat();
+									cout << endl;
+									return 0;
+								}
+							}
+							name += currCh;
+							currCh = line[i], i++;
+						}
+
+
+						cout << "Имя: " << name;
 						currCh = line[i], i++;
+
+						while (currCh != ')')
+						{
+							if (!isdigit(currCh))// Если время не число
+							{
+								system("cls");
+								cout << "Ошибка: Время задано неправильно (не число)";
+								inputFormat();
+								cout << endl;
+								return 0;
+							}
+							temp += currCh;
+							currCh = line[i], i++;
+						}
+						time = stoi(temp);
+
+						if (lineNum == 1)
+						{
+							firstQueue[personNum1].name = name;
+							firstQueue[personNum1].time = time;
+							personNum1++;
+						}
+						if (lineNum == 10)
+						{
+							secondQueue[personNum2].name = name;
+							secondQueue[personNum2].time = time;
+							personNum2++;
+						}
+
+						cout << "  Время в очереди: " << time << endl;
+						temp = "";
+						name = "";
+						time = 0;
 					}
-					name += currCh;
-					currCh = line[i], i++;
 				}
-
-
-				cout << "Имя: " << name;
-				currCh = line[i], i++;
-
-				while (currCh != ')')
-				{
-					if (!isdigit(currCh))// Если время не число
-					{
-						system("cls");
-						cout << "Ошибка: Время задано неправильно (не число)";
-						cout << endl;
-						return 0;
-					}
-					temp += currCh;
-					currCh = line[i], i++;
-				}
-				time = stoi(temp);
-
-				if (lineNum == 1)
-				{
-					firstQueue[personNum1].name = name;
-					firstQueue[personNum1].time = time;
-					personNum1++;
-				}
-				if (lineNum == 10)
-				{
-					secondQueue[personNum2].name = name;
-					secondQueue[personNum2].time = time;
-					personNum2++;
-				}
-
-				cout << "  Время в очереди: " << time << endl;
-				temp = "";
-				name = "";
-				time = 0;
 			}
-		}
-	}
-	if (line == "" && lineNum == 0)
-	{
-		system("cls");
-		cout << "Ошибка: Файл пустой";
-		cout << endl;
-		return 0;
-	}
-	if (line == "" && lineNum == 1)
-	{
-		system("cls");
-		cout << "Ошибка: Вторая очередь отсутствует";
-		cout << endl;
-		return 0;
-	}
-
-	cout << endl;
-
-	int timeFirstSum = 0, timeSecondSum = 0, timeFirstStart = 0, timeFirstEnd = 0, timeSecondStart = 0, timeSecondEnd = 0, difference = 0;
-	int largQueue;
-	bool firstElement = true;
-	bool firstBusy, secondBusy;
-	int iFirst = 0;
-	int iSecond = 0;
-	firstBusy = false; secondBusy = false;
-
-	if (personNum1 > personNum2)
-	{
-		largQueue = personNum1;
-	}
-	else
-	{
-		largQueue = personNum2;
-	}
-
-	while (firstQueue[iFirst].name != "" || secondQueue[iSecond].name != "")
-	{
-		if (firstElement)
-		{
-			if (firstQueue[iFirst].name == secondQueue[iSecond].name)
+			if (line == "" && lineNum == 0) // Если файл пустой
 			{
-				(personNum1, personNum2) = deleteFromBoth(iFirst, iSecond, personNum1, personNum2);
-				(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
-				iFirst++;
+				system("cls");
+				cout << "Ошибка: Файл пустой";
+				inputFormat();
+				cout << endl;
+				return 0;
+			}
+			if (line == "" && lineNum == 1) // Если вторая очередь отсутствует
+			{
+				system("cls");
+				cout << "Ошибка: Вторая очередь отсутствует";
+				inputFormat();
+				cout << endl;
+				return 0;
+			}
+
+
+			bool error = dataValidation(personNum1, personNum2); // Валидация полученных очередей
+			if (error)
+			{
+				return 0;
+			}
+			cout << endl;
+
+
+			int timeFirstSum = 0, timeSecondSum = 0, timeFirstStart = 0, timeFirstEnd = 0, timeSecondStart = 0, timeSecondEnd = 0, difference = 0;
+			int largQueue;
+			bool firstElement = true;
+			bool firstBusy, secondBusy;
+			int iFirst = 0;
+			int iSecond = 0;
+			firstBusy = false; secondBusy = false;
+
+			if (personNum1 > personNum2)
+			{
+				largQueue = personNum1;
 			}
 			else
 			{
-				personNum2 = deleteFromSecond(iFirst, iSecond, personNum2);
-				(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
-
-				personNum1 = deleteFromFirst(iFirst, iSecond, personNum1);
-				(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(iSecond, timeSecondEnd, timeSecondStart, timeSecondSum);
-				iFirst++;
-				iSecond++;
+				largQueue = personNum2;
 			}
-			firstElement = false;
-		}
 
-		if (iFirst < personNum1) // Первая очередь
-		{
-
-			if (firstQueue[iFirst].name == secondQueue[iSecond].name && firstQueue[iFirst].name != "")
+			while (firstQueue[iFirst].name != "" || secondQueue[iSecond].name != "")
 			{
-				(personNum1, personNum2) = deleteFromBoth(iFirst, iSecond, personNum1, personNum2);
-				(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
-				iFirst++;
-			}
-			else
-			{
-				difference = (timeFirstSum - timeSecondSum);
-				
-				if (difference >= firstQueue[iFirst].time)
+				if (firstElement)
 				{
-					while (difference >= firstQueue[iFirst].time && firstQueue[iFirst].time != 0)
+					if (firstQueue[iFirst].name == secondQueue[iSecond].name)
 					{
-						(personNum1, personNum2) = transitionToSecond(iFirst, iSecond, personNum1, personNum2);
-						(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(iSecond, timeSecondEnd, timeSecondStart, timeSecondSum);
-						difference = (timeFirstSum - timeSecondSum);
-						iSecond++;
-					}
-					iFirst++;
-				}
-				else
-				{
-					personNum2 = deleteFromSecond(iFirst, iSecond, personNum2);
-					(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
-					iFirst++;
-				}
-
-			}
-		}
-		if (iSecond <= personNum2) // Вторая очередь
-		{
-
-			if (firstQueue[iFirst].name == secondQueue[iSecond].name && firstQueue[iFirst].name != "")
-			{
-				(personNum1, personNum2) = deleteFromBoth(iFirst, iSecond, personNum1, personNum2);
-				(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
-				iFirst++;
-			}
-			else
-			{
-				difference = (timeSecondSum - timeFirstSum);
-				if (difference >= secondQueue[iSecond].time)
-				{
-					while (difference >= secondQueue[iSecond].time && secondQueue[iSecond].time != 0)
-					{
-						(personNum1, personNum2) = transitionToFirst(iFirst, iSecond, personNum1, personNum2);
+						(personNum1, personNum2) = deleteFromBoth(iFirst, iSecond, personNum1, personNum2);
 						(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
-						difference = (timeSecondSum - timeFirstSum);
 						iFirst++;
 					}
+					else
+					{
+						personNum2 = deleteFromSecond(iFirst, iSecond, personNum2);
+						(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
+
+						personNum1 = deleteFromFirst(iFirst, iSecond, personNum1);
+						(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(iSecond, timeSecondEnd, timeSecondStart, timeSecondSum);
+						iFirst++;
+						iSecond++;
+					}
+					firstElement = false;
 				}
-				else
+
+				if (iFirst < personNum1) // Первая очередь
 				{
-					personNum1 = deleteFromFirst(iFirst, iSecond, personNum1);
-					(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(iSecond, timeSecondEnd, timeSecondStart, timeSecondSum);
-					iSecond++;
+
+					if (firstQueue[iFirst].name == secondQueue[iSecond].name && firstQueue[iFirst].name != "")
+					{
+						(personNum1, personNum2) = deleteFromBoth(iFirst, iSecond, personNum1, personNum2);
+						(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
+						iFirst++;
+					}
+					else
+					{
+						if (timeFirstSum > timeSecondSum)
+						{
+							while (timeFirstSum > timeSecondSum && firstQueue[iFirst].time != 0)
+							{
+								(personNum1, personNum2) = transitionToSecond(iFirst, iSecond, personNum1, personNum2);
+								(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(iSecond, timeSecondEnd, timeSecondStart, timeSecondSum);
+								iSecond++;
+							}
+							iFirst++;
+						}
+						else
+						{
+							personNum2 = deleteFromSecond(iFirst, iSecond, personNum2);
+							(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
+							iFirst++;
+						}
+
+					}
+				}
+				if (iSecond <= personNum2) // Вторая очередь
+				{
+
+					if (firstQueue[iFirst].name == secondQueue[iSecond].name && firstQueue[iFirst].name != "")
+					{
+						(personNum1, personNum2) = deleteFromBoth(iFirst, iSecond, personNum1, personNum2);
+						(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
+						iFirst++;
+					}
+					else
+					{
+						if (timeSecondSum > timeFirstSum)
+						{
+							while (timeSecondSum > timeFirstSum && secondQueue[iSecond].time != 0)
+							{
+								(personNum1, personNum2) = transitionToFirst(iFirst, iSecond, personNum1, personNum2);
+								(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
+								iFirst++;
+							}
+						}
+						else
+						{
+							personNum1 = deleteFromFirst(iFirst, iSecond, personNum1);
+							(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(iSecond, timeSecondEnd, timeSecondStart, timeSecondSum);
+							iSecond++;
+						}
+					}
 				}
 			}
+
+
+			timeFirstStart = 0; timeFirstEnd = 0; timeSecondStart = 0; timeSecondEnd = 0;
+			cout << endl;
+			cout << "1: ";
+			for (int i = 0; i < personNum1; i++)
+			{
+				timeFirstStart = timeFirstEnd;
+				timeFirstEnd = firstQueue[i].time + timeFirstStart;
+				if (firstQueue[i].name == "")
+				{
+					continue;
+				}
+				cout << firstQueue[i].name << "[" << timeFirstStart << ", " << timeFirstEnd << "]";
+				if (i == personNum1 - 1)
+				{
+					break;
+				}
+				cout << ", ";
+			}
+			cout << endl;
+			cout << "2: ";
+			for (int i = 0; i < personNum2; i++)
+			{
+				timeSecondStart = timeSecondEnd;
+				timeSecondEnd = secondQueue[i].time + timeSecondStart;
+				if (secondQueue[i].name == "")
+				{
+					continue;
+				}
+				cout << secondQueue[i].name << "[" << timeSecondStart << ", " << timeSecondEnd << "]";
+				if (i == personNum2 - 1)
+				{
+					break;
+				}
+				cout << ", ";
+			}
+			cout << endl << endl;
+			fileName = getUserAnswer();
 		}
-	}
-
-
-	timeFirstStart = 0; timeFirstEnd = 0; timeSecondStart = 0; timeSecondEnd = 0;
-	cout << endl;
-	cout << "1: ";
-	for (int i = 0; i < personNum1; i++)
-	{
-		timeFirstStart = timeFirstEnd;
-		timeFirstEnd = firstQueue[i].time + timeFirstStart;
-		cout << firstQueue[i].name << "[" << timeFirstStart << ", " << timeFirstEnd << "]" ;
-		if (i == personNum1 - 1)
+		else
 		{
-			break;
+			cout << endl;
+			cout << "Файл не существует!" << endl;
+			cout << endl;
+			fileName = getUserAnswer();
 		}
-		cout << ", ";
+	
 	}
-	cout << endl;
-	cout << "2: ";
-	for (int i = 0; i < personNum2; i++)
-	{
-		timeSecondStart = timeSecondEnd;
-		timeSecondEnd = secondQueue[i].time + timeSecondStart;
-		cout << secondQueue[i].name << "[" << timeSecondStart << ", " << timeSecondEnd << "]";
-		if (i == personNum2 - 1)
-		{
-			break;
-		}
-		cout << ", ";
-	}
-
 }
-
-/*timeSecondSum += secondQueue[i].time;
-if (timeFirstSum > timeSecondSum)
-{
-	firstBusy = true;
-}*/
-
-/*if (firstBusy)
-{
-	(personNum1, personNum2) = transitionToSecond(i, personNum1, personNum2);
-	(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(i, timeSecondEnd, timeSecondStart, timeSecondSum);
-	firstBusy = false;
-}
-else*/
