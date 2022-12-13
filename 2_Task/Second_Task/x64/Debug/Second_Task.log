@@ -1,4 +1,4 @@
 ﻿  Second_Task.cpp
-c:\users\admin\documents\github\algoritms_data_structure\2_task\second_task\second_task.cpp(297): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
-c:\users\admin\documents\github\algoritms_data_structure\2_task\second_task\second_task.cpp(163): warning C4715: deleteFromBoth: значение возвращается не при всех путях выполнения
-  Second_Task.vcxproj -> C:\Users\Admin\Documents\GitHub\Algoritms_Data_Structure\2_Task\x64\Debug\Second_Task.exe
+c:\users\вадим\documents\github\algoritms_data_structure\2_task\second_task\second_task.cpp(297): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+c:\users\вадим\documents\github\algoritms_data_structure\2_task\second_task\second_task.cpp(163): warning C4715: deleteFromBoth: значение возвращается не при всех путях выполнения
+  Second_Task.vcxproj -> C:\Users\Вадим\Documents\GitHub\Algoritms_Data_Structure\2_Task\x64\Debug\Second_Task.exe

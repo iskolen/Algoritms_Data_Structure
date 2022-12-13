@@ -462,7 +462,7 @@ int main()
 					}
 					else
 					{
-						if (timeFirstSum > timeSecondSum)
+						/*if (timeFirstSum > timeSecondSum)
 						{
 							while (timeFirstSum > timeSecondSum && firstQueue[iFirst].time != 0)
 							{
@@ -472,7 +472,7 @@ int main()
 							}
 							iFirst++;
 						}
-						else
+						else*/
 						{
 							personNum2 = deleteFromSecond(iFirst, iSecond, personNum2);
 							(timeFirstEnd, timeFirstStart, timeFirstSum) = timeCountFirst(iFirst, timeFirstEnd, timeFirstStart, timeFirstSum);
@@ -492,7 +492,7 @@ int main()
 					}
 					else
 					{
-						if (timeSecondSum > timeFirstSum)
+						/*if (timeSecondSum > timeFirstSum)
 						{
 							while (timeSecondSum > timeFirstSum && secondQueue[iSecond].time != 0)
 							{
@@ -501,7 +501,7 @@ int main()
 								iFirst++;
 							}
 						}
-						else
+						else*/
 						{
 							personNum1 = deleteFromFirst(iFirst, iSecond, personNum1);
 							(timeSecondEnd, timeSecondStart, timeSecondSum) = timeCountSecond(iSecond, timeSecondEnd, timeSecondStart, timeSecondSum);
