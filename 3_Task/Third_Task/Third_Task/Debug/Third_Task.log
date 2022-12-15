@@ -1,0 +1,5 @@
+﻿  Third_Task.cpp
+c:\users\admin\desktop\3_task\third_task\third_task\third_task.cpp(70): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\admin\desktop\3_task\third_task\third_task\third_task.cpp(102): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\admin\desktop\3_task\third_task\third_task\third_task.cpp(198): warning C4018: <: несоответствие типов со знаком и без знака
+  Third_Task.vcxproj -> C:\Users\Admin\Desktop\3_Task\Third_Task\Debug\Third_Task.exe
