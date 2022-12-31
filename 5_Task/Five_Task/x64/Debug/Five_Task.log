@@ -1,0 +1,3 @@
+﻿  Five_Task.cpp
+c:\users\вадим\desktop\5_task\five_task\five_task.cpp(39): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+  Five_Task.vcxproj -> C:\Users\Вадим\Desktop\5_Task\x64\Debug\Five_Task.exe

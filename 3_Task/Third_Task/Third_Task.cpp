@@ -17,11 +17,13 @@
 #include <fstream>
 #include <locale>
 #include <Windows.h>
+#include <stdlib.h>
 
 using namespace std;
 
 
-struct treeNode {
+struct treeNode 
+{
 	string parent;
 	vector<treeNode*> child;
 	treeNode* father;
@@ -34,78 +36,128 @@ treeNode* newNode(string name)
 	return temp;
 }
 
-void printNode(treeNode* tree)
+void printNode(treeNode* tree, string name)
 {
-	cout << endl << "Имя: " << tree->parent << endl;
+	cout << endl << "Имя: " << tree->parent << endl << endl;
 	cout << "Дети: ";
 
 	if (tree->child.size() > 0)
 	{
 		for (treeNode* node : tree->child)
+		{
 			cout << node->parent << " ";
+		}
+
+		bool haveGrandsons = false;
+		cout << endl << "Внуки: ";
+		for (int i = 0; i < tree->child.size(); i++)
+		{
+			for (treeNode* node : tree->child[i]->child)
+			{
+				if (tree->child[i]->child.size() > 0)
+				{
+					cout << node->parent << " ";
+					haveGrandsons = true;
+				}
+			}
+		}
+		if (haveGrandsons == false)
+		{
+			cout << "Внуки не указаны";
+		}
 	}
 	else
 	{
-		cout << "Дети отсутствуют";
+		cout << "Дети не указаны" << endl;
+		cout << "Внуки: Внуки не указаны";
 	}
+
+	if (tree->father != NULL && tree->father->child.size() > 1)
+	{
+		cout << endl << "Братья/Сёстры: ";
+
+		for (treeNode* node : tree->father->child)
+		{
+			if (node->parent != name)
+			{
+				cout << node->parent << " ";
+			}
+		}
+
+	}
+	else
+	{
+		cout << endl << "Братья/Сёстры: Братья не указаны";
+	}
+
+
 	if (tree->father != NULL)
 	{
 		cout << endl << "Отец: " << tree->father->parent;
+		if (tree->father->father != NULL)
+		{
+			cout << endl << "Дедушка: " << tree->father->father->parent;
+		}
+		else
+		{
+			cout << endl << "Дедушка: Дедушка не указан";
+		}
 	}
-	if (tree->father->father != NULL)
+	else
 	{
-		cout << endl << "Дедушка: " << tree->father->father->parent;
+		cout << endl << "Отец: Отец не указан";
+		cout << endl << "Дедушка: Дедушка не указан";
 	}
 
 	cout << endl << endl;
 }
 
-void printTree(treeNode* tree)
+void printTree(treeNode* tree, string name)
 {
 	if (tree == NULL)
 	{
 		return;
 	}
-	printNode(tree);
-	for (int i = 0; i < tree->child.size(); i++)
-	{
-		printTree(tree->child[i]);
-	}
+	printNode(tree, name);
 }
 
 treeNode* searchNode(treeNode* root, string name)
 {
+	int size;
+	bool haveName = false;
+	queue<treeNode*> Queue;
 	treeNode* element = new treeNode;
 	if (!root)
 	{
 		return NULL;
 	}
-	if (root->parent == name)
+
+	Queue.push(root);
+	while (!Queue.empty())
 	{
-		printTree(root);
-	}
-	queue<treeNode*> q;
-	q.push(root);
-	while (!q.empty())
-	{
-		int n = (int)q.size();
-		while (n > 0)
+		size = (int)Queue.size();
+		while (size > 0)
 		{
-			treeNode* p = q.front();
-			q.pop();
+			treeNode* first = Queue.front();
+			Queue.pop();
 
-			if (p->parent == name)
+			if (first->parent == name)
 			{
-				printTree(p);
+				printTree(first, name);
+				haveName = true;
 			}
 
-			for (int i = 0; i < p->child.size(); i++)
+			for (int i = 0; i < first->child.size(); i++)
 			{
-				q.push(p->child[i]);
+				Queue.push(first->child[i]);
 			}
 
-			n--;
+			size--;
 		}
+	}
+	if (haveName == false)
+	{
+		cout << endl << "Имя введено неверно!" << endl << endl;
 	}
 
 	return element;
@@ -116,7 +168,7 @@ int getDepth(string line)
 {
 	int index = 0;
 
-	while (line[index] == ' ')
+	while (line[index] == '.')
 	{
 		index++;
 	}
@@ -137,73 +189,104 @@ string getName(string line)
 }
 
 
-ifstream openFile(string file_name)
-{
-	ifstream file;
-	file.open(file_name);
-
-	if (!file.is_open())
-		cout << endl << "Ошибка при открытии файла: " << file_name << "!" << endl;
-
-	return file;
-}
-
-void searchDriver(treeNode * root)
+void search(treeNode * root, string fileName)
 {
 	bool flagInput = true;
+	int action;
+	string line;
 
-	cout << "Добро пожаловать в программу поиска. Для выхода введите 'выход'" << endl << endl;
-	while (flagInput)
+	cout << "1. Нахождение родственников определённого человека" << endl;
+	cout << "2. Вывод семейного дерева" << endl;
+	cout << "0. Выход из программы" << endl << endl;
+	cout << "Выберите дейсвтие: ";
+
+	cin >> action;
+
+	if (action == 0)
 	{
-		string name;
-		cout << "Введите имя: ";
-		cin >> name;
-
-		if (name == "выход")
-			flagInput = false;
-		if (name != "")
-			searchNode(root, name);
+		exit(0);
 	}
+
+	if (action == 1)
+	{
+		while (flagInput)
+		{
+			string name, absent;
+			cout << endl << "Введите имя: ";
+			cin >> name;
+
+			if (name != "")
+			{
+				searchNode(root, name);
+			}
+			flagInput = false;
+		}
+	}
+
+	if (action == 2)
+	{
+		fstream fileInput(fileName);
+		cout << endl;
+		while (getline(fileInput, line))
+		{
+			cout << line << endl;
+		}
+		cout << endl;
+	}
+
+}
+
+string getUserAnswer()
+{
+	string fileName;
+	cout << "Введите имя входного файла('0', если хотите выйти): ";
+	cin >> fileName;
+	return fileName;
 }
 
 int main()
 {
-	setlocale(LC_ALL, "Russian");
+	setlocale(LC_ALL, "RUS");
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
-	ifstream input;
-	string line;
+	string line, fileName;
 	treeNode* root;
 
-	input = openFile("input.txt");
-
-	getline(input, line);
-	root = newNode(line);
-
-	vector<treeNode*> nodes;
-	nodes.push_back(root);
-
-	while (getline(input, line))
+	fileName = getUserAnswer();
+	while (fileName != "0")
 	{
-		int level = getDepth(line);
-		string name = getName(line);
-		treeNode* node = newNode(name);
-
-		if (level == nodes.size())
+		fstream fileInput(fileName);
+		if (fileInput.good())
 		{
-			nodes.push_back(node);
+			getline(fileInput, line);
+			root = newNode(line);
+
+			vector<treeNode*> nodes;
+			nodes.push_back(root);
+
+			while (getline(fileInput, line))
+			{
+				int level = getDepth(line);
+				string name = getName(line);
+				treeNode* node = newNode(name);
+
+				nodes.push_back(node);
+				node->father = nodes[level - 1];
+				nodes[level - 1]->child.push_back(node);
+				nodes.erase(nodes.begin() + level, nodes.end());
+				nodes.push_back(node);
+			}
+
+			search(root, fileName);
 		}
-
-		if (level < nodes.size())
+		else
 		{
-			node->father = nodes[level - 1];
-			nodes[level - 1]->child.push_back(node);
-			nodes.erase(nodes.begin() + level, nodes.end());
-			nodes.push_back(node);
+			cout << endl;
+			cout << "Файл не существует!" << endl;
+			cout << endl;
+			fileName = getUserAnswer();
 		}
 	}
-
-	searchDriver(root);
 }
 
